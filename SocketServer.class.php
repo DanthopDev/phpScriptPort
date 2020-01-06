@@ -246,6 +246,21 @@
 		public static function socket_write_smart(&$sock,$string,$crlf = "\r\n")
 		{
 			SocketServer::debug("<-- {$string}");
+                        //$log = 'log.txt';
+                        //$actual = file_get_contents($log);
+                        //$actual .= "{$string}\n";
+                        $coord = strrev($string);
+                        //$curl = curl_init();
+                        //curl_setopt($curl, CURLOPT_POST, 1);
+                        //curl_setopt($curl, CURLOPT_POSTFIELDS, $coord);
+                        //curl_setopt($curl, CURLOPT_URL, "controlvehicular.danthoppruebas.com/api/coordenadas");
+                        //curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+                        //$result = curl_exec($curl);
+                        //curl_close($curl);
+                        //fwrite($log, "{$string} \n");
+                        //fclose($log);
+                        //$response = file_get_contents('http://controlvehicular.danthoppruebas.com/api/coordenadas', $coord);
+
 			if($crlf) { $string = "{$string}{$crlf}"; }
 			return socket_write($sock,$string,strlen($string));
 		}
