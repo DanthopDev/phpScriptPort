@@ -23,7 +23,7 @@
 		/*!	@var		max_clients
 			@abstract	unsigned int - The maximum number of clients allowed to connect.
 		 */
-		public $max_clients = 10;
+		public $max_clients = 88;
 
 		/*!	@var		max_read
 			@abstract	unsigned int - The maximum number of bytes to read from a socket at a single time.
@@ -50,7 +50,14 @@
 			$this->config["port"] = $port;
 
 			$this->master_socket = socket_create(AF_INET, SOCK_STREAM, 0);
-			socket_bind($this->master_socket,$this->config["ip"],$this->config["port"]) or die("Issue Binding");
+                        $flag = false;
+			while(!$flag){
+                         
+                         if(socket_bind($this->master_socket,$this->config["ip"],$this->config["port"])){
+				$flag = true;
+                          } //or die("Issue Binding");
+			 sleep(10);
+                        }
 			socket_getsockname($this->master_socket,$bind_ip,$port);
 			socket_listen($this->master_socket);
 			SocketServer::debug("Listenting for connections on {$bind_ip}:{$port}");
@@ -120,9 +127,11 @@
 					$read[$i + 1] = $this->clients[$i]->socket;
 				}
 			}
-
+			$write = NULL;
+			$except = NULL;
+			$tv_sec = 5;
 			// Set up a blocking call to socket_select
-			if(socket_select($read,$write = NULL, $except = NULL, $tv_sec = 5) < 1)
+			if(socket_select($read,$write, $except, $tv_sec) < 1)
 			{
 			//	SocketServer::debug("Problem blocking socket_select?");
 				return true;
@@ -249,14 +258,14 @@
                         //$log = 'log.txt';
                         //$actual = file_get_contents($log);
                         //$actual .= "{$string}\n";
-                        $coord = strrev($string);
-                        //$curl = curl_init();
-                        //curl_setopt($curl, CURLOPT_POST, 1);
-                        //curl_setopt($curl, CURLOPT_POSTFIELDS, $coord);
-                        //curl_setopt($curl, CURLOPT_URL, "controlvehicular.danthoppruebas.com/api/coordenadas");
-                        //curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                        //$result = curl_exec($curl);
-                        //curl_close($curl);
+                        $coord['string'] = strrev($string);
+                        $curl = curl_init();
+                        curl_setopt($curl, CURLOPT_POST, 1);
+                        curl_setopt($curl, CURLOPT_POSTFIELDS, $coord);
+                        curl_setopt($curl, CURLOPT_URL, "controlvehicular.danthoppruebas.com/api/coordenadas");
+                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+                        $result = curl_exec($curl);
+                        curl_close($curl);
                         //fwrite($log, "{$string} \n");
                         //fclose($log);
                         //$response = file_get_contents('http://controlvehicular.danthoppruebas.com/api/coordenadas', $coord);
